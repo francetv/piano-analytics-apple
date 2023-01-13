@@ -81,7 +81,7 @@ final class WorkingQueue {
         let ps = PrivacyStep(cs)
         self.steps = [
             cs,
-            VisitorIDStep.shared(ps),
+            VisitorIDStep(ps),
             CrashHandlingStep.shared(ps),
             CustomerContextPropertiesStep(),
             LifecycleStep.shared(ps),

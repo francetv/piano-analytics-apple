@@ -33,16 +33,6 @@ import UIKit
 
 final class VisitorIDStep: Step {
 
-    // MARK: Constructors
-
-    private static var _instance: VisitorIDStep?
-    static let shared: (PrivacyStep) -> VisitorIDStep = { ps in
-        if _instance == nil {
-            _instance = VisitorIDStep(ps: ps)
-        }
-        return _instance ?? VisitorIDStep(ps: ps)
-    }
-
     private typealias visitorIDClosure = (Configuration, PrivacyStep) -> (Bool, String)
     private final let IDFA: visitorIDClosure = { (_: Configuration, _: PrivacyStep) -> (Bool, String) in
         let idfaInfo = getIDFA()
@@ -119,7 +109,7 @@ final class VisitorIDStep: Step {
 
     private final let privacyStep: PrivacyStep
 
-    private init(ps: PrivacyStep) {
+    init(_ ps: PrivacyStep) {
         let oldStorageKeyWithNew: [ATVisitorIdKeys: VisitorIdKeys] = [
             ATVisitorIdKeys.VisitorUUID: VisitorIdKeys.VisitorUUID,
             ATVisitorIdKeys.VisitorUUIDGenerationTimestamp: VisitorIdKeys.VisitorUUIDGenerationTimestamp
