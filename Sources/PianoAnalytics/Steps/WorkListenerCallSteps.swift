@@ -27,13 +27,6 @@ import Foundation
 
 final class OnBeforeBuildCallStep: Step {
 
-    // MARK: Constructors
-
-    static let shared: OnBeforeBuildCallStep = OnBeforeBuildCallStep()
-
-    private init() {
-    }
-
     // MARK: Constants
 
     private static let CallbackUsedProperty = "_callback_used"
@@ -59,13 +52,6 @@ final class OnBeforeBuildCallStep: Step {
 }
 
 final class OnBeforeSendCallStep: Step {
-
-    // MARK: Constructors
-
-    static let shared: OnBeforeSendCallStep = OnBeforeSendCallStep()
-
-    private init() {
-    }
 
     // MARK: Step Implementation
 

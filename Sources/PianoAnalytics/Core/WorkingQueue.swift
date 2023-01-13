@@ -87,11 +87,11 @@ final class WorkingQueue {
             LifecycleStep.shared(ps),
             InternalContextPropertiesStep.shared,
             UsersStep(ps),
-            OnBeforeBuildCallStep.shared,
+            OnBeforeBuildCallStep(),
             ps,
             BuildStep.shared,
             StorageStep.shared,
-            OnBeforeSendCallStep.shared,
+            OnBeforeSendCallStep(),
             SendStep.shared
         ]
     }
