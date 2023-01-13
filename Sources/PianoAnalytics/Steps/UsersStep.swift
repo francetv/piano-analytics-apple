@@ -27,16 +27,6 @@ import Foundation
 
 final class UsersStep: Step {
 
-    // MARK: Constructors
-
-    private static var _instance: UsersStep?
-    static let shared: (PrivacyStep) -> UsersStep = { ps in
-        if _instance == nil {
-            _instance = UsersStep(ps)
-        }
-        return _instance ?? UsersStep(ps)
-    }
-
     private let privacyStep: PrivacyStep
     private var user: User?
     private var userRecognition: Bool = false
