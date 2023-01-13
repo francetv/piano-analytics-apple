@@ -27,19 +27,12 @@ import Foundation
 
 final class StorageStep: Step {
 
-    // MARK: Constructors
-
-    static let shared: StorageStep = StorageStep()
-
     private final let storageDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd-HH:mm:ss.SSS"
         formatter.locale = Locale(identifier: "en_US_POSIX")
         return formatter
     }()
-
-    private init() {
-    }
 
     // MARK: Constants
 
