@@ -85,7 +85,7 @@ final class WorkingQueue {
             CrashHandlingStep.shared(ps),
             CustomerContextPropertiesStep(),
             LifecycleStep.shared(ps),
-            InternalContextPropertiesStep.shared,
+            InternalContextPropertiesStep(),
             UsersStep(ps),
             OnBeforeBuildCallStep(),
             ps,

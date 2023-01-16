@@ -32,10 +32,6 @@ import WatchKit
 
 final class InternalContextPropertiesStep: Step {
 
-    // MARK: Constructors
-
-    static let shared: InternalContextPropertiesStep = InternalContextPropertiesStep()
-
     private final let displayingProperties : () -> [String: Any] = {
         #if !os(watchOS) && canImport(UIKit)
         let screenBounds = UIScreen.main.bounds
@@ -99,7 +95,7 @@ final class InternalContextPropertiesStep: Step {
 
     private final let propertiesFunctions : [() -> [String: Any]]
 
-    private init() {
+    init() {
         self.propertiesFunctions = [
             displayingProperties,
             applicationProperties,
