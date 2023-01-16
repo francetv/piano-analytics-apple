@@ -27,16 +27,6 @@ import Foundation
 
 final class LifecycleStep: Step {
 
-    // MARK: Constructors
-
-    private static var _instance: LifecycleStep?
-    static let shared: (PrivacyStep) -> LifecycleStep = { ps in
-        if _instance == nil {
-            _instance = LifecycleStep(ps: ps)
-        }
-        return _instance ?? LifecycleStep(ps: ps)
-    }
-
     private final let daysSinceFirstSession: (UserDefaults, PrivacyStep) -> Void = { (ud, ps) in
         guard let firstSessionDate = ud.object(forKey: LifeCycleKeys.FirstSessionDate.rawValue) as? Date else {
             return
@@ -72,7 +62,7 @@ final class LifecycleStep: Step {
     private final var timeBackgroundStarted: Date?
     private final var sessionBackgroundDuration: Int?
 
-    private init(ps: PrivacyStep) {
+    init(_ ps: PrivacyStep) {
         let oldStorageKeyWithNew: [ATLifeCycleKeys: LifeCycleKeys] = [
             ATLifeCycleKeys.FirstInitLifecycleDone: LifeCycleKeys.FirstInitLifecycleDone,
             ATLifeCycleKeys.InitLifecycleDone: LifeCycleKeys.InitLifecycleDone,
