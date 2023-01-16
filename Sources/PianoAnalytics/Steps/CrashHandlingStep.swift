@@ -42,15 +42,22 @@ final class CrashHandlingStep: Step {
             ATCrashKeys.CrashInfo: CrashKeys.CrashInfo
         ]
         for (oldStorageKey, newStorageKey) in oldStorageKeyWithNew {
-            if (UserDefaults.standard.value(forKey: newStorageKey.rawValue) == nil) {
-                if let oldValue = UserDefaults.standard.value(forKey: oldStorageKey.rawValue) {
-                    UserDefaults.standard.set(oldValue, forKey: newStorageKey.rawValue)
-                    UserDefaults.standard.removeObject(forKey: oldStorageKey.rawValue)
+            // Using .standard here should be ok : exception and signal handling can be shared globally
+            let userDefaults = UserDefaults.standard
+            if (userDefaults.value(forKey: newStorageKey.rawValue) == nil) {
+                if let oldValue = userDefaults.value(forKey: oldStorageKey.rawValue) {
+                    userDefaults.set(oldValue, forKey: newStorageKey.rawValue)
+                    userDefaults.removeObject(forKey: oldStorageKey.rawValue)
                 }
             }
         }
 
         self.privacyStep = ps
+
+        // Since C function pointers cannot be formed from closures that capture context,
+        // it is not possible to inject the custom UserDefaults suite.
+        // Using .standard here should be ok : exception and signal handling can be shared globally,
+        // but the following behaviors could be executed several times since there could be more than one instance of PianoAnalytics.
         self.exceptionHandler = { exception in
             let userDefaults = UserDefaults.standard
             userDefaults.setValue([
@@ -93,6 +100,7 @@ final class CrashHandlingStep: Step {
             return [String: ContextProperty]()
         }
 
+        // Using .standard here should be ok : exception and signal handling can be shared globally
         let userDefaults = UserDefaults.standard
         let crashed = userDefaults.bool(forKey: CrashKeys.Crashed.rawValue)
         userDefaults.removeObject(forKey: CrashKeys.Crashed.rawValue)

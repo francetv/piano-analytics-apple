@@ -71,8 +71,9 @@ final class WorkingQueue {
     ]
 
     init(name: String, configFileLocation: String) {
+        let ud = UserDefaults(suiteName: "pianoanalytics.\(name)") ?? .standard
         let cs = ConfigurationStep(configFileLocation)
-        let ps = PrivacyStep(cs)
+        let ps = PrivacyStep(cs: cs, ud: ud)
         self.steps = [
             cs,
             VisitorIDStep(ps),

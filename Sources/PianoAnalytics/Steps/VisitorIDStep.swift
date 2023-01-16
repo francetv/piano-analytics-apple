@@ -63,7 +63,7 @@ final class VisitorIDStep: Step {
 
     }
     private final let UUID: visitorIDClosure = { (c: Configuration, ps: PrivacyStep) -> (Bool, String) in
-        let userDefaults = UserDefaults.standard
+        let userDefaults = ps.userDefaults
         let now = Int64(Date().timeIntervalSince1970) * 1000
         let uuidDuration = c.get(ConfigurationKey.StorageLifetimeVisitor).toInt()
         let uuidExpirationMode = VisitorStorageMode.init(rawValue: c.get(ConfigurationKey.VisitorStorageMode)) ?? VisitorStorageMode.Fixed
@@ -115,10 +115,10 @@ final class VisitorIDStep: Step {
             ATVisitorIdKeys.VisitorUUIDGenerationTimestamp: VisitorIdKeys.VisitorUUIDGenerationTimestamp
         ]
         for (oldStorageKey, newStorageKey) in oldStorageKeyWithNew {
-            if (UserDefaults.standard.value(forKey: newStorageKey.rawValue) == nil) {
-                if let oldValue = UserDefaults.standard.value(forKey: oldStorageKey.rawValue) {
-                    UserDefaults.standard.set(oldValue, forKey: newStorageKey.rawValue)
-                    UserDefaults.standard.removeObject(forKey: oldStorageKey.rawValue)
+          if (ps.userDefaults.value(forKey: newStorageKey.rawValue) == nil) {
+                if let oldValue = ps.userDefaults.value(forKey: oldStorageKey.rawValue) {
+                    ps.userDefaults.set(oldValue, forKey: newStorageKey.rawValue)
+                    ps.userDefaults.removeObject(forKey: oldStorageKey.rawValue)
                 }
             }
         }

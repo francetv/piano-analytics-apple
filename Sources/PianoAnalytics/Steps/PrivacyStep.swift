@@ -40,8 +40,9 @@ final class PrivacyStep: Step {
     private final var inNoConsentMode: Bool = false
     private final var inNoStorageMode: Bool = false
     private final let configurationStep: ConfigurationStep
+    final let userDefaults: UserDefaults
 
-    init(_ cs: ConfigurationStep) {
+    init(cs: ConfigurationStep, ud: UserDefaults) {
         let oldStorageKeyWithNew: [ATPrivacyKeys: PrivacyKeys] = [
             ATPrivacyKeys.PrivacyMode: PrivacyKeys.PrivacyMode,
             ATPrivacyKeys.PrivacyModeExpirationTimestamp: PrivacyKeys.PrivacyModeExpirationTimestamp,
@@ -49,15 +50,16 @@ final class PrivacyStep: Step {
             ATPrivacyKeys.PrivacyVisitorId: PrivacyKeys.PrivacyVisitorId
         ]
         for (oldStorageKey, newStorageKey) in oldStorageKeyWithNew {
-            if (UserDefaults.standard.value(forKey: newStorageKey.rawValue) == nil) {
-                if let oldValue = UserDefaults.standard.value(forKey: oldStorageKey.rawValue) {
-                    UserDefaults.standard.set(oldValue, forKey: newStorageKey.rawValue)
-                    UserDefaults.standard.removeObject(forKey: oldStorageKey.rawValue)
+            if (ud.value(forKey: newStorageKey.rawValue) == nil) {
+                if let oldValue = ud.value(forKey: oldStorageKey.rawValue) {
+                    ud.set(oldValue, forKey: newStorageKey.rawValue)
+                    ud.removeObject(forKey: oldStorageKey.rawValue)
                 }
             }
         }
 
         self.configurationStep = cs
+        self.userDefaults = ud
     }
 
     // MARK: Constants
@@ -71,8 +73,6 @@ final class PrivacyStep: Step {
     final func storeData(_ storageKey: String, pairs: (String, Any?)...) {
         let visitorMode = getVisitorMode()
         if getVisitorModeAuthorizedStorageKey(visitorMode).contains(storageKey) {
-            let userDefaults = UserDefaults.standard
-
             pairs.forEach { (p) in
                 if let o = p.1 {
                     userDefaults.set(o, forKey: p.0)
@@ -85,8 +85,6 @@ final class PrivacyStep: Step {
     }
     
     final func forcedStoreData(pairs: (String, Any?)...) {
-        let userDefaults = UserDefaults.standard
-        
         pairs.forEach { (p) in
             if let o = p.1 {
                 userDefaults.set(o, forKey: p.0)
@@ -160,11 +158,11 @@ final class PrivacyStep: Step {
     }
 
     private final func getPrivacyVisitorConsent() -> Bool {
-        return UserDefaults.standard.bool(forKey: PrivacyKeys.PrivacyVisitorConsent.rawValue)
+        return userDefaults.bool(forKey: PrivacyKeys.PrivacyVisitorConsent.rawValue)
     }
 
     private final func getPrivacyVisitorModeRemainingDuration() -> Int {
-        let expiration = Int64(UserDefaults.standard.integer(forKey: PrivacyKeys.PrivacyModeExpirationTimestamp.rawValue))
+        let expiration = Int64(userDefaults.integer(forKey: PrivacyKeys.PrivacyModeExpirationTimestamp.rawValue))
         guard expiration > 0 else {
             return 0
         }
@@ -173,7 +171,7 @@ final class PrivacyStep: Step {
     }
 
     private final func getPrivacyVisitorId() -> String? {
-        return UserDefaults.standard.string(forKey: PrivacyKeys.PrivacyVisitorId.rawValue)
+        return userDefaults.string(forKey: PrivacyKeys.PrivacyVisitorId.rawValue)
     }
 
     private final func getVisitorMode() -> String {
@@ -184,7 +182,6 @@ final class PrivacyStep: Step {
             return PA.Privacy.Mode.NoStorage.Name
         }
 
-        let userDefaults = UserDefaults.standard
         let storageLifetimePrivacy = configurationStep.getConfigurationValue(key: ConfigurationKey.StorageLifetimePrivacy).toInt()
         let defaultMode = configurationStep.getConfigurationValue(key: ConfigurationKey.PrivacyDefaultMode)
 
@@ -301,7 +298,6 @@ final class PrivacyStep: Step {
     }
 
     private final func clearStorageFromVisitorMode(_ visitorMode: String) {
-        let userDefaults = UserDefaults.standard
         PrivacyStep.storageKeysByFeature.forEach { (entry) in
             let includeStorage = getVisitorModeAuthorizedStorageKey(visitorMode)
             if includeStorage.contains(entry.key) {

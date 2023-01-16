@@ -28,13 +28,15 @@ import XCTest
 @testable import PianoAnalytics
 
 class UsersTests: XCTestCase {
+    static let name = "PA"
 
-    var pa = PianoAnalytics(name: "PA")
+    let userDefaults = UserDefaults(suiteName: "pianoanalytics.\(name)") ?? .standard
+    var pa = PianoAnalytics(name: name)
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         clearStorage()
-        self.pa = PianoAnalytics(name: "PA", configFileLocation: "default-test.json")
+        self.pa = PianoAnalytics(name: Self.name, configFileLocation: "default-test.json")
     }
 
     override func tearDownWithError() throws {
@@ -50,7 +52,6 @@ class UsersTests: XCTestCase {
     }
 
     func clearStorageFromVisitorMode(_ visitorMode: String) {
-        let userDefaults = UserDefaults.standard
         PrivacyStep.storageKeysByFeature.forEach { (entry) in
             entry.value.forEach { (key) in
                 userDefaults.removeObject(forKey: key)
@@ -163,8 +164,8 @@ class UsersTests: XCTestCase {
         var localBuilt1: BuiltModel?
         var localBuilt2: BuiltModel?
 
-        UserDefaults.standard.set(["user": "{\"id\":\"123\",\"category\":\"456789\"}"], forKey: UserKeys.Users.rawValue)
-        UserDefaults.standard.set(Int64(Date().timeIntervalSince1970) * 1000, forKey: UserKeys.UserGenerationTimestamp.rawValue)
+        userDefaults.set(["user": "{\"id\":\"123\",\"category\":\"456789\"}"], forKey: UserKeys.Users.rawValue)
+        userDefaults.set(Int64(Date().timeIntervalSince1970) * 1000, forKey: UserKeys.UserGenerationTimestamp.rawValue)
 
         self.pa.getModel { m in
             model = m

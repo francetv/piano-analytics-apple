@@ -28,6 +28,7 @@ import XCTest
 @testable import PianoAnalytics
 
 class PrivacyTests: XCTestCase {
+    static let name = "PA"
 
     var testEvents: [Event] = [
         Event("custom.specific.event", data: [
@@ -265,12 +266,13 @@ class PrivacyTests: XCTestCase {
             "customprop3andmore2": "3a2"
         ])
     ]
-    var pa = PianoAnalytics(name: "PA")
+    var pa = PianoAnalytics(name: name)
+    let userDefaults = UserDefaults(suiteName: "pianoanalytics.\(name)") ?? .standard
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         clearStorage()
-        self.pa = PianoAnalytics(name: "PA", configFileLocation: "default-test.json")
+        self.pa = PianoAnalytics(name: Self.name, configFileLocation: "default-test.json")
     }
 
     override func tearDownWithError() throws {
@@ -286,7 +288,6 @@ class PrivacyTests: XCTestCase {
     }
 
     func clearStorageFromVisitorMode(_ visitorMode: String) {
-        let userDefaults = UserDefaults.standard
         PrivacyStep.storageKeysByFeature.forEach { (entry) in
             entry.value.forEach { (key) in
                 userDefaults.removeObject(forKey: key)
@@ -1758,8 +1759,9 @@ class PrivacyTests: XCTestCase {
     }
 
     func testIsAuthorizedEvent() throws {
+        let userDefaults = UserDefaults(suiteName: "pianoanalytics.PA") ?? .standard
         let configurationStep = ConfigurationStep(nil)
-        let privacyStep = PrivacyStep(configurationStep)
+        let privacyStep = PrivacyStep(cs: configurationStep, ud: userDefaults)
         let eventName = "test.event"
         var authorizedEvents: Set<String> = []
         var forbiddenEvents: Set<String> = []

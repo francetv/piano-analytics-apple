@@ -27,28 +27,28 @@ import Foundation
 
 final class LifecycleStep: Step {
 
-    private final let daysSinceFirstSession: (UserDefaults, PrivacyStep) -> Void = { (ud, ps) in
-        guard let firstSessionDate = ud.object(forKey: LifeCycleKeys.FirstSessionDate.rawValue) as? Date else {
+    private final let daysSinceFirstSession: (PrivacyStep) -> Void = { ps in
+        guard let firstSessionDate = ps.userDefaults.object(forKey: LifeCycleKeys.FirstSessionDate.rawValue) as? Date else {
             return
         }
         ps.storeData(PA.Privacy.Storage.Lifecycle, pairs: (LifeCycleKeys.DaysSinceFirstSession.rawValue, PianoAnalyticsUtils.daysBetweenDates(firstSessionDate, toDate: Date())))
     }
 
-    private final let daysSinceLastSession: (UserDefaults, PrivacyStep) -> Void = { (ud, ps) in
-        guard let lastSessiondate = ud.object(forKey: LifeCycleKeys.LastSessionDate.rawValue) as? Date else {
+    private final let daysSinceLastSession: (PrivacyStep) -> Void = { ps in
+        guard let lastSessiondate = ps.userDefaults.object(forKey: LifeCycleKeys.LastSessionDate.rawValue) as? Date else {
             return
         }
         ps.storeData(PA.Privacy.Storage.Lifecycle, pairs: (LifeCycleKeys.DaysSinceLastSession.rawValue, PianoAnalyticsUtils.daysBetweenDates(lastSessiondate, toDate: Date())))
     }
 
-    private final let daysSinceUpdate: (UserDefaults, PrivacyStep) -> Void = { (ud, ps) in
-        guard let firstSessionDateAfterUpdate = ud.object(forKey: LifeCycleKeys.FirstSessionDateAfterUpdate.rawValue) as? Date else {
+    private final let daysSinceUpdate: (PrivacyStep) -> Void = { ps in
+        guard let firstSessionDateAfterUpdate = ps.userDefaults.object(forKey: LifeCycleKeys.FirstSessionDateAfterUpdate.rawValue) as? Date else {
             return
         }
         ps.storeData(PA.Privacy.Storage.Lifecycle, pairs: (LifeCycleKeys.DaysSinceUpdate.rawValue, PianoAnalyticsUtils.daysBetweenDates(firstSessionDateAfterUpdate, toDate: Date())))
     }
 
-    private final let computingMetrics: [(UserDefaults, PrivacyStep) -> Void]
+    private final let computingMetrics: [(PrivacyStep) -> Void]
 
     private final let lifecycleDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -79,10 +79,10 @@ final class LifecycleStep: Step {
             ATLifeCycleKeys.DaysSinceLastSession: LifeCycleKeys.DaysSinceLastSession
         ]
         for (oldStorageKey, newStorageKey) in oldStorageKeyWithNew {
-            if (UserDefaults.standard.value(forKey: newStorageKey.rawValue) == nil) {
-                if let oldValue = UserDefaults.standard.value(forKey: oldStorageKey.rawValue) {
-                    UserDefaults.standard.set(oldValue, forKey: newStorageKey.rawValue)
-                    UserDefaults.standard.removeObject(forKey: oldStorageKey.rawValue)
+            if (ps.userDefaults.value(forKey: newStorageKey.rawValue) == nil) {
+                if let oldValue = ps.userDefaults.value(forKey: oldStorageKey.rawValue) {
+                    ps.userDefaults.set(oldValue, forKey: newStorageKey.rawValue)
+                    ps.userDefaults.removeObject(forKey: oldStorageKey.rawValue)
                 }
             }
         }
@@ -93,9 +93,8 @@ final class LifecycleStep: Step {
         notificationCenter.addObserver(self, selector: #selector(self.applicationDidEnterBackground), name: NSNotification.Name(rawValue: "UIApplicationDidEnterBackgroundNotification"), object: nil)
         notificationCenter.addObserver(self, selector: #selector(self.applicationActive), name: NSNotification.Name(rawValue: "UIApplicationDidBecomeActiveNotification"), object: nil)
 
-        let ud = UserDefaults.standard
-        ud.removeObject(forKey: LifeCycleKeys.InitLifecycleDone.rawValue)
-        ud.synchronize()
+        ps.userDefaults.removeObject(forKey: LifeCycleKeys.InitLifecycleDone.rawValue)
+        ps.userDefaults.synchronize()
 
     }
 
@@ -104,7 +103,7 @@ final class LifecycleStep: Step {
     // MARK: Private methods
 
     private final func `init`() {
-        let ud = UserDefaults.standard
+        let ud = self.privacyStep.userDefaults
         if !ud.bool(forKey: LifeCycleKeys.FirstSession.rawValue) || ud.bool(forKey: LifeCycleKeys.FirstInitLifecycleDone.rawValue) {
             self.newSessionInit()
         } else {
@@ -129,9 +128,9 @@ final class LifecycleStep: Step {
     }
 
     private final func newSessionInit() {
-        let ud = UserDefaults.standard
+        let ud = self.privacyStep.userDefaults
         self.computingMetrics.forEach { f in
-            f(ud, self.privacyStep)
+            f(self.privacyStep)
         }
 
         let now = Date()
@@ -172,7 +171,7 @@ final class LifecycleStep: Step {
     }
 
     private final func getProperties() -> [String: ContextProperty] {
-        let ud = UserDefaults.standard
+        let ud = self.privacyStep.userDefaults
 
         if !ud.bool(forKey: LifeCycleKeys.InitLifecycleDone.rawValue) {
             self.`init`()

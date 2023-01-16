@@ -48,13 +48,14 @@ class TestProtocol: PianoAnalyticsWorkProtocol {
 }
 
 class PropertiesTests: XCTestCase {
+    static let name = "PA"
 
-    var pa = PianoAnalytics(name: "PA")
+    var pa = PianoAnalytics(name: name)
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         clearStorage()
-        self.pa = PianoAnalytics(name: "PA", configFileLocation: "default-test.json")
+        self.pa = PianoAnalytics(name: Self.name, configFileLocation: "default-test.json")
     }
 
     override func tearDownWithError() throws {
@@ -70,7 +71,7 @@ class PropertiesTests: XCTestCase {
     }
 
     func clearStorageFromVisitorMode(_ visitorMode: String) {
-        let userDefaults = UserDefaults.standard
+        let userDefaults = UserDefaults(suiteName: "pianoanalytics.\(Self.name)") ?? .standard
         PrivacyStep.storageKeysByFeature.forEach { (entry) in
             entry.value.forEach { (key) in
                 userDefaults.removeObject(forKey: key)

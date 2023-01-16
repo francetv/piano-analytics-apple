@@ -32,11 +32,11 @@ final class UsersStep: Step {
     private var userRecognition: Bool = false
 
     init(_ ps: PrivacyStep) {
-        if (UserDefaults.standard.value(forKey: UserKeys.Users.rawValue) == nil) {
-            if let oldValue = UserDefaults.standard.value(forKey: ATUserKeys.Users.rawValue) {
-                UserDefaults.standard.set(oldValue, forKey: UserKeys.Users.rawValue)
-                UserDefaults.standard.set(Int64(Date().timeIntervalSince1970) * 1000, forKey: UserKeys.UserGenerationTimestamp.rawValue)
-                UserDefaults.standard.removeObject(forKey: ATUserKeys.Users.rawValue)
+        if (ps.userDefaults.value(forKey: UserKeys.Users.rawValue) == nil) {
+            if let oldValue = ps.userDefaults.value(forKey: ATUserKeys.Users.rawValue) {
+                ps.userDefaults.set(oldValue, forKey: UserKeys.Users.rawValue)
+                ps.userDefaults.set(Int64(Date().timeIntervalSince1970) * 1000, forKey: UserKeys.UserGenerationTimestamp.rawValue)
+                ps.userDefaults.removeObject(forKey: ATUserKeys.Users.rawValue)
             }
         }
 
@@ -66,7 +66,7 @@ final class UsersStep: Step {
         let userDuration = config.get(ConfigurationKey.StorageLifetimeUser).toInt()
 
         /// get user generation timestamp
-        guard let userGenerationTimestamp = UserDefaults.standard.object(forKey: UserKeys.UserGenerationTimestamp.rawValue) as? Int64 else {
+        guard let userGenerationTimestamp = privacyStep.userDefaults.object(forKey: UserKeys.UserGenerationTimestamp.rawValue) as? Int64 else {
             return nil
         }
 
@@ -80,7 +80,7 @@ final class UsersStep: Step {
             return nil
         }
 
-        guard let storedValue = UserDefaults.standard.dictionary(forKey: UserKeys.Users.rawValue) as? [String: String] else {
+        guard let storedValue = privacyStep.userDefaults.dictionary(forKey: UserKeys.Users.rawValue) as? [String: String] else {
             return nil
         }
 
