@@ -27,12 +27,6 @@ import Foundation
 
 final class PrivacyStep: Step {
 
-    // MARK: Constructors
-
-    static let shared: (ConfigurationStep) -> PrivacyStep = { configurationStep in
-        return PrivacyStep(configurationStep)
-    }
-
     static let storageKeysByFeature: [String: Set<String>] = [
         PA.Privacy.Storage.VisitorId: Set(VisitorIdKeys.allCases.map { $0.rawValue }),
         PA.Privacy.Storage.Privacy: Set(PrivacyKeys.allCases.map { $0.rawValue }),

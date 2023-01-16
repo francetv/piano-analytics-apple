@@ -1759,7 +1759,7 @@ class PrivacyTests: XCTestCase {
 
     func testIsAuthorizedEvent() throws {
         let configurationStep = ConfigurationStep.shared(nil)
-        let privacyStep = PrivacyStep.shared(configurationStep)
+        let privacyStep = PrivacyStep(configurationStep)
         let eventName = "test.event"
         var authorizedEvents: Set<String> = []
         var forbiddenEvents: Set<String> = []
