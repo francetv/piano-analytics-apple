@@ -31,13 +31,7 @@ enum ProcessingType {
 
 final class WorkingQueue {
 
-    private final let operationQueue: OperationQueue = {
-        let _queue = OperationQueue()
-        _queue.name = "PianoAnalyticsQueue"
-        _queue.maxConcurrentOperationCount = 1
-        return _queue
-    }()
-
+    private final let operationQueue: OperationQueue
     private final let steps: [Step]
     private final let processingMap: [ProcessingType: ([Step], inout Model, PianoAnalyticsWorkProtocol?) -> Void] = [
         ProcessingType.SetConfig: { (steps: [Step], m: inout Model, _: PianoAnalyticsWorkProtocol?) in
@@ -76,7 +70,7 @@ final class WorkingQueue {
         }
     ]
 
-    init(_ configFileLocation: String) {
+    init(name: String, configFileLocation: String) {
         let cs = ConfigurationStep(configFileLocation)
         let ps = PrivacyStep(cs)
         self.steps = [
@@ -94,6 +88,12 @@ final class WorkingQueue {
             OnBeforeSendCallStep(),
             SendStep()
         ]
+        operationQueue = {
+            let _queue = OperationQueue()
+            _queue.name = "PianoAnalyticsQueue_\(name)"
+            _queue.maxConcurrentOperationCount = 1
+            return _queue
+        }()
     }
 
     final func getModelAsync(_ completionHandler: ((_ m: Model) -> Void)?) {

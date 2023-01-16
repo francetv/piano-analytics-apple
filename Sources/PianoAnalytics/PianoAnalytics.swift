@@ -416,7 +416,12 @@ public final class PianoAnalytics {
 
     internal final let queue: WorkingQueue
 
-    public init(configFileLocation: String? = nil) {
-        self.queue = WorkingQueue(configFileLocation ?? PA.Configuration.Location)
+    /// Constructor
+    ///
+    /// - Parameters:
+    ///   - name: Custom name identifying the created instance, used internally for the operation queue and storage
+    ///   - configFileLocation: Optional custom configuration file location
+    public init(name: String, configFileLocation: String? = nil) {
+      self.queue = WorkingQueue(name: name, configFileLocation: configFileLocation ?? PA.Configuration.Location)
     }
 }

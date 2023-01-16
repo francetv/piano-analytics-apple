@@ -29,12 +29,12 @@ import XCTest
 
 class UsersTests: XCTestCase {
 
-    var pa = PianoAnalytics()
+    var pa = PianoAnalytics(name: "PA")
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         clearStorage()
-        self.pa = PianoAnalytics(configFileLocation: "default-test.json")
+        self.pa = PianoAnalytics(name: "PA", configFileLocation: "default-test.json")
     }
 
     override func tearDownWithError() throws {
