@@ -27,13 +27,6 @@ import Foundation
 
 final class BuildStep: Step {
 
-    // MARK: Constructors
-
-    static let shared: BuildStep = BuildStep()
-
-    private init() {
-    }
-
     // MARK: Constants
 
     private static let RequestUriFormat = "https://%@%@?s=%@&idclient=%@"
