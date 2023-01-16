@@ -40,6 +40,18 @@ final class StorageStep: Step {
     private static let UriField = "uri"
     private static let BodyField = "body"
 
+    private let filename: String
+
+    // MARK: Constructor
+
+    private init(filename: String) {
+        self.filename = filename
+    }
+
+    convenience init(_ name: String) {
+        self.init(filename: "\(StorageStep.OfflineDataFilenamePrefix)\(name)")
+    }
+
     // MARK: Private methods
 
     private final func getDocumentsDirectory() -> URL? {
@@ -63,7 +75,7 @@ final class StorageStep: Step {
         }
 
         do {
-            try encryptedData.write(to: documentsDirectory.appendingPathComponent(String(format: "%@%@", StorageStep.OfflineDataFilenamePrefix, self.storageDateFormatter.string(from: Date()))), atomically: true, encoding: .utf8)
+            try encryptedData.write(to: documentsDirectory.appendingPathComponent(String(format: "%@%@", filename, self.storageDateFormatter.string(from: Date()))), atomically: true, encoding: .utf8)
         } catch {
             print("PianoAnalytics: error on StorageStep.storeData: \(error)")
         }
@@ -77,7 +89,7 @@ final class StorageStep: Step {
         do {
             let files = try fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
                 .filter {
-                    $0.lastPathComponent.starts(with: StorageStep.OfflineDataFilenamePrefix)
+                    $0.lastPathComponent.starts(with: filename)
                 }
                 .sorted(by: {
                     $0.lastPathComponent < $1.lastPathComponent
@@ -114,7 +126,7 @@ final class StorageStep: Step {
         for key in stored.keys {
             do {
                 if let url = URL(string: key) {
-                    if let endIndex = url.absoluteString.endIndex(of: StorageStep.OfflineDataFilenamePrefix) {
+                    if let endIndex = url.absoluteString.endIndex(of: filename) {
                         if let fileDate = storageDateFormatter.date(from: String(url.absoluteString[endIndex...])) {
                             if fileDate < storageRemainingDate {
                                 try FileManager.default.removeItem(at: url)
