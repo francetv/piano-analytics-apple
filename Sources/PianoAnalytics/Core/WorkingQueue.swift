@@ -82,7 +82,7 @@ final class WorkingQueue {
         self.steps = [
             cs,
             VisitorIDStep(ps),
-            CrashHandlingStep.shared(ps),
+            CrashHandlingStep(ps),
             CustomerContextPropertiesStep(),
             LifecycleStep(ps),
             InternalContextPropertiesStep(),

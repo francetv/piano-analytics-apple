@@ -27,16 +27,6 @@ import Foundation
 
 final class CrashHandlingStep: Step {
 
-    // MARK: Constructors
-
-    private static var _instance: CrashHandlingStep?
-    static let shared: (PrivacyStep) -> CrashHandlingStep = { ps in
-        if _instance == nil {
-            _instance = CrashHandlingStep(ps: ps)
-        }
-        return _instance ?? CrashHandlingStep(ps: ps)
-    }
-
     private static let defaultHandler : (@convention(c) (NSException) -> Swift.Void)? = NSGetUncaughtExceptionHandler()
     private final let exceptionHandler : (@convention(c) (NSException) -> Swift.Void)?
     private final let signalHandler : (@convention(c) (Int32) -> Swift.Void)
@@ -46,7 +36,7 @@ final class CrashHandlingStep: Step {
 
     private final var isCrashHandlingRegistered: Bool = false
 
-    private init(ps: PrivacyStep) {
+    init(_ ps: PrivacyStep) {
         let oldStorageKeyWithNew: [ATCrashKeys: CrashKeys] = [
             ATCrashKeys.Crashed: CrashKeys.Crashed,
             ATCrashKeys.CrashInfo: CrashKeys.CrashInfo
