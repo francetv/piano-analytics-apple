@@ -92,7 +92,7 @@ final class WorkingQueue {
             BuildStep.shared,
             StorageStep(),
             OnBeforeSendCallStep(),
-            SendStep.shared
+            SendStep()
         ]
     }
 

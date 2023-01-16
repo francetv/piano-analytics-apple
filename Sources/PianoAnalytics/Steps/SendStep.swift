@@ -27,13 +27,6 @@ import Foundation
 
 final class SendStep: Step {
 
-    // MARK: Constructors
-
-    static let shared: SendStep = SendStep()
-
-    private init() {
-    }
-
     // MARK: Constants
 
     private static let TimeoutMs = 10_000.0
