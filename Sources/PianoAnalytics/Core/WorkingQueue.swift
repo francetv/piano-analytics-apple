@@ -77,7 +77,7 @@ final class WorkingQueue {
     ]
 
     init(_ configFileLocation: String) {
-        let cs = ConfigurationStep.shared(configFileLocation)
+        let cs = ConfigurationStep(configFileLocation)
         let ps = PrivacyStep(cs)
         self.steps = [
             cs,

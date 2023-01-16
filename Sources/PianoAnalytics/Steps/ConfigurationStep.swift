@@ -35,19 +35,9 @@ final class ConfigurationStep: Step {
     private static let UserAgentWebViewProperty = "userAgent"
     private static let UserAgentFormat = "%@ %@/%@"
 
-    // MARK: Constructors
-
-    private static var _instance: ConfigurationStep?
-    static let shared: (String?) -> ConfigurationStep = { configFileLocation in
-        if _instance == nil {
-            _instance = ConfigurationStep(configFileLocation: configFileLocation)
-        }
-        return _instance ?? ConfigurationStep(configFileLocation: configFileLocation)
-    }
-
     private final let configuration: Configuration
 
-    private init(configFileLocation: String?) {
+    init(_ configFileLocation: String?) {
         self.configuration = Configuration(file: configFileLocation)
     }
 
