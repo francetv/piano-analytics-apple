@@ -67,6 +67,7 @@ class ConfigurationTests: XCTestCase {
         let expectation = self.expectation(description: "Configuration")
         var defaultConfiguration: Configuration?
 
+        let pa = PianoAnalytics()
         pa.setConfiguration(ConfigurationBuilder().withSite(123456).build())
         pa.getModel { m in
             defaultConfiguration = m.configuration

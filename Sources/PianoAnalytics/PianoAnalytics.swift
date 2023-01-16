@@ -25,8 +25,6 @@
 
 import Foundation
 
-public let pa = PianoAnalytics.shared
-
 public protocol PianoAnalyticsWorkProtocol {
     /// Called when raw data is available and customer want to override it before building
     ///
@@ -414,30 +412,11 @@ public final class PianoAnalytics {
         queue.getModelAsync(ch)
     }
 
-    // MARK: Constants
-
-    private static let ConfigFile = PA.Configuration.Location
-
     // MARK: Constructors
-
-    private static var _instance: PianoAnalytics?
-
-    /// Simple default init
-    public static let shared: PianoAnalytics = sharedWithConfigurationFilePath(ConfigFile)
-
-    /// Specific init with custom location configuration file
-    ///
-    /// - Parameter configFileLocation: file path from resources folder
-    public static let sharedWithConfigurationFilePath: (String) -> PianoAnalytics = { configFileLocation in
-        if _instance == nil {
-            _instance = PianoAnalytics(configFileLocation: configFileLocation)
-        }
-        return _instance ?? PianoAnalytics(configFileLocation: configFileLocation)
-    }
 
     internal final let queue: WorkingQueue
 
-    init(configFileLocation: String) {
-        self.queue = WorkingQueue(configFileLocation)
+    public init(configFileLocation: String? = nil) {
+        self.queue = WorkingQueue(configFileLocation ?? PA.Configuration.Location)
     }
 }
